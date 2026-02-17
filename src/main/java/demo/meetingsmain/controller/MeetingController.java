@@ -6,6 +6,7 @@ import demo.meetingscontracts.endpoints.MeetingsApi;
 import demo.meetingsmain.service.MeetingService;
 import org.springframework.web.bind.annotation.RestController;
 import java.net.MalformedURLException;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -20,6 +21,11 @@ public class MeetingController implements MeetingsApi {
     @Override
     public MeetingResponse getMeeting(UUID uuid) {
         return meetingService.getMeeting(uuid);
+    }
+
+    @Override
+    public List<MeetingResponse> getMeetings() {
+        return meetingService.getMeetings();
     }
 
     @Override
