@@ -51,3 +51,4 @@ build/
 /build/
 *.log
 node_modules/
+lib
