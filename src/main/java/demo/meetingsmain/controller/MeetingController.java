@@ -4,7 +4,10 @@ import demo.meetingscontracts.dto.MeetingRequest;
 import demo.meetingscontracts.dto.MeetingResponse;
 import demo.meetingscontracts.endpoints.MeetingsApi;
 import demo.meetingsmain.service.MeetingService;
+import demo.meetingsmain.service.RedisService;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.UUID;
@@ -13,9 +16,11 @@ import java.util.UUID;
 public class MeetingController implements MeetingsApi {
 
     private final MeetingService meetingService;
+    private final RedisService redisService;
 
-    public MeetingController(MeetingService meetingService) {
+    public MeetingController(MeetingService meetingService, RedisService redisService) {
         this.meetingService = meetingService;
+        this.redisService = redisService;
     }
 
     @Override
@@ -35,5 +40,16 @@ public class MeetingController implements MeetingsApi {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public String uploadFile(MultipartFile file, Integer ord, Boolean isLast, UUID uuid) {
+        String fullPath = uuid.toString() + "_chunk_" + ord;
+        try {
+            redisService.saveAudio(fullPath, file.getBytes());
+        } catch (IOException e) {
+            return "Error";
+        }
+        return "Ok";
     }
 }

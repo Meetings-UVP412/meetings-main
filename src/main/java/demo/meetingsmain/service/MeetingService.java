@@ -28,8 +28,8 @@ public class MeetingService {
                 request.authorId(),
                 LocalDateTime.now(),
                 0,
-                "",
-                "",
+                request.comment(),
+                request.link(),
                 MeetingStatus.NEW);
 
         storage.meetings.put(meetingResponse.uid(), meetingResponse);
