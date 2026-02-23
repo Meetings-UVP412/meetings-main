@@ -5,6 +5,7 @@ import demo.meetingscontracts.dto.MeetingResponse;
 import demo.meetingscontracts.endpoints.MeetingsApi;
 import demo.meetingsmain.service.MeetingService;
 import demo.meetingsmain.service.RedisService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -35,21 +36,16 @@ public class MeetingController implements MeetingsApi {
 
     @Override
     public MeetingResponse createMeeting(MeetingRequest request) {
-        try {
-            return meetingService.createMeeting(request);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+        return meetingService.createMeeting(request);
     }
 
     @Override
     public String uploadFile(MultipartFile file, Integer ord, Boolean isLast, UUID uuid) {
-        String fullPath = uuid.toString() + "_chunk_" + ord;
         try {
-            redisService.saveAudio(fullPath, file.getBytes());
+            redisService.saveAudio(ord, isLast, uuid, file.getBytes());
         } catch (IOException e) {
             return "Error";
         }
-        return "Ok";
+        return "Встреча создана!";
     }
 }

@@ -6,10 +6,11 @@ import demo.meetingscontracts.dto.MeetingStatus;
 import demo.meetingscontracts.exceptions.ResourceNotFoundException;
 import demo.meetingsmain.storage.InMemoryStorage;
 import org.springframework.stereotype.Service;
-import java.net.MalformedURLException;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -20,7 +21,12 @@ public class MeetingService {
         this.storage = storage;
     }
 
-    public MeetingResponse createMeeting(MeetingRequest request) throws MalformedURLException {
+    public void findByUUID(UUID uuid) {
+        Optional.ofNullable(storage.meetings.get(uuid))
+                .orElseThrow(() -> new ResourceNotFoundException("Meeting", uuid));
+    }
+
+    public MeetingResponse createMeeting(MeetingRequest request) {
         MeetingResponse meetingResponse = new MeetingResponse(
                 UUID.randomUUID(),
                 request.name(),
@@ -37,7 +43,8 @@ public class MeetingService {
     }
 
     public MeetingResponse getMeeting(UUID uuid) {
-        if (!checkMeetingExists(uuid)) { throw new ResourceNotFoundException("Meeting", uuid); }
+        findByUUID(uuid); // check meeting exists
+
         return storage.meetings.get(uuid);
     }
 

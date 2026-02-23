@@ -1,6 +1,7 @@
 package demo.meetingsmain.exception;
 
 import demo.meetingscontracts.dto.StatusResponse;
+import demo.meetingscontracts.exceptions.IllegalArgumentException;
 import demo.meetingscontracts.exceptions.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,19 +24,12 @@ public class GlobalExceptionHandler {
                 .body(new StatusResponse("error", ex.getMessage()));
     }
 
-//    @ExceptionHandler(IncorrectPasswordException.class)
-//    public ResponseEntity<StatusResponse> handleIncorrectPassword(IncorrectPasswordException ex) {
-//        return ResponseEntity
-//                .status(HttpStatus.BAD_REQUEST)
-//                .body(new StatusResponse("error", ex.getMessage()));
-//    }
-//
-//    @ExceptionHandler(EmailAlreadyExistsException.class)
-//    public ResponseEntity<StatusResponse> handleIsbnAlreadyExists(EmailAlreadyExistsException ex) {
-//        return ResponseEntity
-//                .status(HttpStatus.CONFLICT)
-//                .body(new StatusResponse("error", ex.getMessage()));
-//    }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<StatusResponse> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new StatusResponse("error", ex.getMessage()));
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<StatusResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
