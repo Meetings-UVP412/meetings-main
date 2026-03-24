@@ -5,11 +5,13 @@ import demo.meetingscontracts.dto.MeetingResponse;
 import demo.meetingscontracts.endpoints.MeetingsApi;
 import demo.meetingsmain.service.MeetingService;
 import demo.meetingsmain.service.RedisService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,5 +49,19 @@ public class MeetingController implements MeetingsApi {
             return "Error";
         }
         return "Встреча создана!";
+    }
+
+    @Override
+    public ResponseEntity<byte[]> getAudioChunk(@PathVariable UUID uuid, @PathVariable Integer ord) {
+        byte[] audioData = redisService.getAudio(uuid.toString() + "_chunk_" + ord);
+
+        if (audioData == null || audioData.length == 0) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("audio/wav"))
+                .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(audioData.length))
+                .body(audioData);
     }
 }

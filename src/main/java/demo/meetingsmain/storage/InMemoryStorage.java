@@ -4,8 +4,6 @@ import demo.meetingscontracts.dto.MeetingResponse;
 import demo.meetingscontracts.dto.MeetingStatus;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +15,7 @@ public class InMemoryStorage {
     public final Map<UUID, MeetingResponse> meetings = new ConcurrentHashMap<>();
 
     @PostConstruct
-    public void init() throws MalformedURLException {
+    public void init() {
         MeetingResponse meetingResponse1 = new MeetingResponse(
                 UUID.randomUUID(),
                 "Лекция СОП",
