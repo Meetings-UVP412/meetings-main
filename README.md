@@ -1,2 +1,2 @@
 для редис
-docker exec -it redis-meetings redis-cli
+docker exec -it redis-meetings redis-cli --raw

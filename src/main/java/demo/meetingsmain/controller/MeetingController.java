@@ -8,8 +8,7 @@ import demo.meetingsmain.service.RedisService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
@@ -63,5 +62,17 @@ public class MeetingController implements MeetingsApi {
                 .contentType(MediaType.parseMediaType("audio/wav"))
                 .header(HttpHeaders.CONTENT_LENGTH, String.valueOf(audioData.length))
                 .body(audioData);
+    }
+
+    @PatchMapping("/updateText/{uuid}")
+    public ResponseEntity<String> updateTextForMeeting(@PathVariable UUID uuid, @RequestBody String body) {
+        redisService.updateResultForMeeting(body, uuid);
+
+        return ResponseEntity.ok("Success updated meeting result!");
+    }
+
+    @GetMapping("/meetingResult/{uuid}")
+    public String getMeetingResult(@PathVariable UUID uuid) {
+        return redisService.getMeetingResult(uuid);
     }
 }

@@ -8,7 +8,9 @@ import demo.meetingsmain.config.RabbitMQConfig;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 @Service
@@ -16,11 +18,13 @@ public class RedisService {
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+    private final StringRedisTemplate stringRedisTemplate;
     private final RabbitTemplate rabbitTemplate;
 
     private final MeetingService meetingService;
 
-    public RedisService(RabbitTemplate rabbitTemplate, MeetingService meetingService) {
+    public RedisService(StringRedisTemplate stringRedisTemplate, RabbitTemplate rabbitTemplate, MeetingService meetingService) {
+        this.stringRedisTemplate = stringRedisTemplate;
         this.rabbitTemplate = rabbitTemplate;
         this.meetingService = meetingService;
     }
@@ -52,5 +56,21 @@ public class RedisService {
 
     public void deleteAudio(String key) {
         redisTemplate.delete(key);
+    }
+
+    public void updateResultForMeeting(String result, UUID uuid) {
+        String fullPath = uuid.toString() + "_result";
+
+        String currentValue = stringRedisTemplate.opsForValue().get(fullPath);
+
+        if (currentValue == null || currentValue.isEmpty()) {
+            stringRedisTemplate.opsForValue().set(fullPath, result);
+        } else {
+            stringRedisTemplate.opsForValue().set(fullPath, currentValue + "\n" + result);
+        }
+    }
+
+    public String getMeetingResult(UUID uuid) {
+        return redisTemplate.opsForValue().get(uuid.toString()).toString();
     }
 }
