@@ -77,6 +77,9 @@ public class RedisService {
     }
 
     public String getMeetingResult(UUID uuid) {
-        return redisTemplate.opsForValue().get(uuid.toString()).toString();
+        String fullPath = uuid.toString() + "_result";
+        String fullText = stringRedisTemplate.opsForValue().get(fullPath);
+        log.info("fullText: {}", fullText);
+        return fullText;
     }
 }
