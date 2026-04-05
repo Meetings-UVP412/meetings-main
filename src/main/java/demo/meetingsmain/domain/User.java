@@ -1,8 +1,8 @@
 package demo.meetingsmain.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -10,15 +10,17 @@ public class User extends BaseEntity {
     private String firstName;
     private String lastName;
     private String patronymic;
+    private Set<Meeting> meetings = new HashSet<>();
+    private Set<Meeting> authorMeetings = new HashSet<>();
 
     protected User() {}
 
-    public User(String firstName, String lastName, String patronymic) {
-        this();
-
+    public User(String firstName, String lastName, String patronymic, Set<Meeting> meetings, Set<Meeting> authorMeetings) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.patronymic = patronymic;
+        this.meetings = meetings;
+        this.authorMeetings = authorMeetings;
     }
 
     @Column(name = "firstName", nullable = false, length = 127)
@@ -48,12 +50,32 @@ public class User extends BaseEntity {
         this.patronymic = patronymic;
     }
 
+    @ManyToMany(mappedBy = "participants", fetch = FetchType.LAZY)
+    public Set<Meeting> getMeetings() {
+        return meetings;
+    }
+
+    public void setMeetings(Set<Meeting> meetings) {
+        this.meetings = meetings;
+    }
+
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    public Set<Meeting> getAuthorMeetings() {
+        return authorMeetings;
+    }
+
+    public void setAuthorMeetings(Set<Meeting> authorMeetings) {
+        this.authorMeetings = authorMeetings;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", patronymic='" + patronymic + '\'' +
+                ", meetings=" + meetings +
+                ", authorMeetings=" + authorMeetings +
                 '}';
     }
 }

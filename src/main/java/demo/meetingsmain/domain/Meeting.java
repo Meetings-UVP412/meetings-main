@@ -1,10 +1,10 @@
 package demo.meetingsmain.domain;
 
 import demo.meetingscontracts.dto.MeetingStatus;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "meetings")
@@ -16,12 +16,12 @@ public class Meeting extends BaseEntity {
     private LocalDate startedAt;
     private String comment;
     private String link;
-    private User authorId;
-    private List<User> participants;
+    private User author;
+    private Set<User> participants = new HashSet<>();
 
     protected Meeting() {}
 
-    public Meeting(String name, MeetingStatus status, Integer duration, LocalDate createdAt, LocalDate startedAt, String comment, String link, List<User> participants, User authorId) {
+    public Meeting(String name, MeetingStatus status, Integer duration, LocalDate createdAt, LocalDate startedAt, String comment, String link, Set<User> participants, User authorId) {
         this();
 
         this.name = name;
@@ -32,9 +32,10 @@ public class Meeting extends BaseEntity {
         this.comment = comment;
         this.link = link;
         this.participants = participants;
-        this.authorId = authorId;
+        this.author = authorId;
     }
 
+    @Column(name = "name", nullable = false)
     public String getName() {
         return name;
     }
@@ -43,6 +44,7 @@ public class Meeting extends BaseEntity {
         this.name = name;
     }
 
+    @Column(name = "duration", nullable = false)
     public Integer getDuration() {
         return duration;
     }
@@ -51,6 +53,8 @@ public class Meeting extends BaseEntity {
         this.duration = duration;
     }
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 31)
     public MeetingStatus getStatus() {
         return status;
     }
@@ -59,6 +63,7 @@ public class Meeting extends BaseEntity {
         this.status = status;
     }
 
+    @Column(name = "created_at", nullable = false)
     public LocalDate getCreatedAt() {
         return createdAt;
     }
@@ -67,6 +72,7 @@ public class Meeting extends BaseEntity {
         this.createdAt = createdAt;
     }
 
+    @Column(name = "started_at", nullable = false)
     public LocalDate getStartedAt() {
         return startedAt;
     }
@@ -75,6 +81,7 @@ public class Meeting extends BaseEntity {
         this.startedAt = startedAt;
     }
 
+    @Column(name = "comment", nullable = false, length = 511)
     public String getComment() {
         return comment;
     }
@@ -83,14 +90,17 @@ public class Meeting extends BaseEntity {
         this.comment = comment;
     }
 
-    public User getAuthorId() {
-        return authorId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_uuid")
+    public User getAuthor() {
+        return author;
     }
 
-    public void setAuthorId(User authorId) {
-        this.authorId = authorId;
+    public void setAuthor(User authorId) {
+        this.author = authorId;
     }
 
+    @Column(name = "link", nullable = false)
     public String getLink() {
         return link;
     }
@@ -99,11 +109,17 @@ public class Meeting extends BaseEntity {
         this.link = link;
     }
 
-    public List<User> getParticipants() {
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "meetings_participants",
+            joinColumns = @JoinColumn(name = "meeting_uuid"),
+            inverseJoinColumns = @JoinColumn(name = "user_uuid")
+    )
+    public Set<User> getParticipants() {
         return participants;
     }
 
-    public void setParticipants(List<User> participants) {
+    public void setParticipants(Set<User> participants) {
         this.participants = participants;
     }
 
@@ -117,7 +133,7 @@ public class Meeting extends BaseEntity {
                 ", startedAt=" + startedAt +
                 ", comment='" + comment + '\'' +
                 ", link='" + link + '\'' +
-                ", authorId=" + authorId +
+                ", authorId=" + author +
                 ", participants=" + participants +
                 '}';
     }
