@@ -65,14 +65,14 @@ public class MeetingController implements MeetingsApi {
     }
 
     @PatchMapping("/updateText/{uuid}")
-    public ResponseEntity<String> updateTextForMeeting(@PathVariable UUID uuid, @RequestBody String body) {
-        redisService.updateResultForMeeting(body, uuid);
+    public ResponseEntity<String> updateTranscriptionForMeeting(@PathVariable UUID uuid, @RequestBody String body) {
+        redisService.updateTranscriptionForMeeting(body, uuid);
 
         return ResponseEntity.ok("Success updated meeting result!");
     }
 
     @GetMapping("/meetingResult/{uuid}")
-    public String getMeetingResult(@PathVariable UUID uuid) {
-        return redisService.getMeetingResult(uuid);
+    public String getMeetingTranscription(@PathVariable UUID uuid) {
+        return redisService.getMeetingTranscription(uuid);
     }
 }

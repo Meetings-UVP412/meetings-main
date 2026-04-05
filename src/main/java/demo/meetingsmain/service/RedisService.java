@@ -62,7 +62,7 @@ public class RedisService {
         redisTemplate.delete(key);
     }
 
-    public void updateResultForMeeting(String result, UUID uuid) {
+    public void updateTranscriptionForMeeting(String result, UUID uuid) {
         String fullPath = uuid.toString() + "_result";
 
         String currentValue = stringRedisTemplate.opsForValue().get(fullPath);
@@ -76,7 +76,7 @@ public class RedisService {
         log.info("Updated result text for meeting: {}", uuid);
     }
 
-    public String getMeetingResult(UUID uuid) {
+    public String getMeetingTranscription(UUID uuid) {
         String fullPath = uuid.toString() + "_result";
         String fullText = stringRedisTemplate.opsForValue().get(fullPath);
         log.info("fullText: {}", fullText);
