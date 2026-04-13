@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "meetings")
-public class Meeting extends BaseEntity {
+public class Meeting extends BaseEntityUUID {
     private String name;
     private MeetingStatus status;
     private Integer duration;
@@ -91,7 +91,7 @@ public class Meeting extends BaseEntity {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_uuid")
+    @JoinColumn(name = "author_id", nullable = false)
     public User getAuthor() {
         return author;
     }
@@ -112,8 +112,8 @@ public class Meeting extends BaseEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "meetings_participants",
-            joinColumns = @JoinColumn(name = "meeting_uuid"),
-            inverseJoinColumns = @JoinColumn(name = "user_uuid")
+            joinColumns = @JoinColumn(name = "meeting_uuid", referencedColumnName = "uuid"),
+            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id")
     )
     public Set<User> getParticipants() {
         return participants;

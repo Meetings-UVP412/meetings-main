@@ -35,7 +35,7 @@ public class RedisService {
         String fullPath = uuid.toString() + "_chunk_" + ord;
 
         // Check meeting exists and have NEW status
-        MeetingResponse meeting = meetingService.getMeeting(uuid);
+        MeetingResponse meeting = meetingService.getMeeting(uuid.toString());
         if (meeting.status() != MeetingStatus.NEW) {
             throw new IllegalArgumentException();
         }

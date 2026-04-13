@@ -16,17 +16,17 @@ public class InMemoryStorage {
 
     @PostConstruct
     public void init() {
-        MeetingResponse meetingResponse1 = new MeetingResponse(
-                UUID.randomUUID(),
-                "Лекция СОП",
-                List.of(1, 2),
-                1,
-                LocalDateTime.now(),
-                600,
-                "Тестовый комментарий",
-                "https://rut-miit.ru/",
-                MeetingStatus.ARCHIVED);
-
-        meetings.put(meetingResponse1.uid(), meetingResponse1);
+//        MeetingResponse meetingResponse1 = new MeetingResponse(
+//                UUID.randomUUID(),
+//                "Лекция СОП",
+//                List.of(1, 2),
+//                1,
+//                LocalDateTime.now(),
+//                600,
+//                "Тестовый комментарий",
+//                "https://rut-miit.ru/",
+//                MeetingStatus.ARCHIVED);
+//
+//        meetings.put(meetingResponse1.uid(), meetingResponse1);
     }
 }

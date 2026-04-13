@@ -31,7 +31,7 @@ services:
     container_name: meetings-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: QuickStay
+      POSTGRES_DB: Meetings
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
@@ -39,7 +39,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d QuickStay" ]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d Meetings" ]
       interval: 10s
       timeout: 5s
       retries: 5

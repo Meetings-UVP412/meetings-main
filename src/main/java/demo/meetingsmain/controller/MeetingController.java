@@ -27,7 +27,7 @@ public class MeetingController implements MeetingsApi {
 
     @Override
     public MeetingResponse getMeeting(UUID uuid) {
-        return meetingService.getMeeting(uuid);
+        return meetingService.getMeeting(uuid.toString());
     }
 
     @Override
