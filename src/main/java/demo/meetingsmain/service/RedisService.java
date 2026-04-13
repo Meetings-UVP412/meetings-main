@@ -4,7 +4,10 @@ import demo.eventscontract.events.ChunkDownloadedEvent;
 import demo.meetingscontracts.dto.MeetingResponse;
 import demo.meetingscontracts.dto.MeetingStatus;
 import demo.meetingscontracts.exceptions.IllegalArgumentException;
+import demo.meetingscontracts.exceptions.ResourceNotFoundException;
 import demo.meetingsmain.config.RabbitMQConfig;
+import demo.meetingsmain.domain.Meeting;
+import demo.meetingsmain.repository.MeetingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -12,12 +15,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class RedisService {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    private MeetingRepository meetingRepository;
+
     private final StringRedisTemplate stringRedisTemplate;
     private final RabbitTemplate rabbitTemplate;
     private static final Logger log = LoggerFactory.getLogger(RedisService.class);
@@ -36,6 +45,18 @@ public class RedisService {
         MeetingResponse meeting = meetingService.getMeeting(uuid.toString());
         if (meeting.status() != MeetingStatus.NEW) {
             throw new IllegalArgumentException();
+        }
+
+        if (isLast) {
+            Optional<Meeting> optionalMeeting = meetingRepository.findById(uuid.toString());
+
+            if (optionalMeeting.isPresent()) {
+                Meeting newMeeting = optionalMeeting.get();
+                newMeeting.setStatus(MeetingStatus.END);
+                meetingRepository.save(newMeeting);
+            } else {
+                throw new ResourceNotFoundException("Meeting", optionalMeeting);
+            }
         }
 
         redisTemplate.opsForValue().set(fullPath, audioData); // save audio in redis
