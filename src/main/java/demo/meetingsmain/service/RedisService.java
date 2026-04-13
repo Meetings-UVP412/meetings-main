@@ -16,13 +16,11 @@ import java.util.UUID;
 
 @Service
 public class RedisService {
-
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
     private final StringRedisTemplate stringRedisTemplate;
     private final RabbitTemplate rabbitTemplate;
     private static final Logger log = LoggerFactory.getLogger(RedisService.class);
-
     private final MeetingService meetingService;
 
     public RedisService(StringRedisTemplate stringRedisTemplate, RabbitTemplate rabbitTemplate, MeetingService meetingService) {

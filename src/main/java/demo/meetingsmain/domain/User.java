@@ -74,8 +74,6 @@ public class User extends BaseEntityID {
                 "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", patronymic='" + patronymic + '\'' +
-                ", meetings=" + meetings +
-                ", authorMeetings=" + authorMeetings +
                 '}';
     }
 }

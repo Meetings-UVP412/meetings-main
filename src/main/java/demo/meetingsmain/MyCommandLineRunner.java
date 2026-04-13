@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Component
@@ -72,7 +73,7 @@ public class MyCommandLineRunner implements CommandLineRunner {
         for (int i = 0; i < 50; i++) {
             String name = names.stream().skip(new Random().nextInt(names.size())).findFirst().get();
             Integer duration = random.nextInt(60, 100000);
-            LocalDate now = LocalDate.now();
+            LocalDateTime now = LocalDateTime.now();
             User author = userRepository.findById(random.nextInt(1, 100)).get();
             List<User> userIds = userRepository.findAll();
             Collections.shuffle(userIds);

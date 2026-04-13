@@ -3,6 +3,7 @@ package demo.meetingsmain.domain;
 import demo.meetingscontracts.dto.MeetingStatus;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,8 +13,8 @@ public class Meeting extends BaseEntityUUID {
     private String name;
     private MeetingStatus status;
     private Integer duration;
-    private LocalDate createdAt;
-    private LocalDate startedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime startedAt;
     private String comment;
     private String link;
     private User author;
@@ -21,7 +22,7 @@ public class Meeting extends BaseEntityUUID {
 
     protected Meeting() {}
 
-    public Meeting(String name, MeetingStatus status, Integer duration, LocalDate createdAt, LocalDate startedAt, String comment, String link, Set<User> participants, User authorId) {
+    public Meeting(String name, MeetingStatus status, Integer duration, LocalDateTime createdAt, LocalDateTime startedAt, String comment, String link, Set<User> participants, User authorId) {
         this();
 
         this.name = name;
@@ -64,20 +65,20 @@ public class Meeting extends BaseEntityUUID {
     }
 
     @Column(name = "created_at", nullable = false)
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
     @Column(name = "started_at", nullable = false)
-    public LocalDate getStartedAt() {
+    public LocalDateTime getStartedAt() {
         return startedAt;
     }
 
-    public void setStartedAt(LocalDate startedAt) {
+    public void setStartedAt(LocalDateTime startedAt) {
         this.startedAt = startedAt;
     }
 
@@ -134,7 +135,6 @@ public class Meeting extends BaseEntityUUID {
                 ", comment='" + comment + '\'' +
                 ", link='" + link + '\'' +
                 ", authorId=" + author +
-                ", participants=" + participants +
                 '}';
     }
 }

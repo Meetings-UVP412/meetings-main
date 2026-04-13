@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -46,7 +47,7 @@ public class MeetingService {
 
         Set<User> participants = new HashSet<>(userRepository.findAllById(request.users()));
 
-        LocalDate now = LocalDate.now();
+        LocalDateTime now = LocalDateTime.now();
         Meeting meeting = new Meeting(
                 request.name(),
                 MeetingStatus.NEW,
@@ -67,7 +68,7 @@ public class MeetingService {
                 savedMeeting.getName(),
                 new HashSet<>(request.users()),
                 savedMeeting.getAuthor().getId(),
-                savedMeeting.getCreatedAt().atStartOfDay(),
+                savedMeeting.getCreatedAt(),
                 savedMeeting.getDuration(),
                 savedMeeting.getComment(),
                 savedMeeting.getLink(),
@@ -79,10 +80,12 @@ public class MeetingService {
         Meeting meeting = meetingRepository.findById(uuid)
                 .orElseThrow(() -> new ResourceNotFoundException("Meeting not found: ", uuid));
 
+        log.info("GET meeting: {}", meeting);
         return toResponse(meeting);
     }
 
     public List<MeetingResponse> getMeetings() {
+        log.info("GET all meeting:");
         return meetingRepository.findAll().stream().map(this::toResponse).toList();
     }
 
@@ -96,7 +99,7 @@ public class MeetingService {
                 meeting.getName(),
                 participantIds,
                 meeting.getAuthor().getId(),
-                meeting.getCreatedAt().atStartOfDay(),
+                meeting.getCreatedAt(),
                 meeting.getDuration(),
                 meeting.getComment(),
                 meeting.getLink(),
