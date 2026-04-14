@@ -3,7 +3,7 @@ package demo.meetingsmain.listeners;
 import demo.eventscontract.events.CleanupMeetingEvent;
 import demo.meetingscontracts.dto.MeetingStatus;
 import demo.meetingsmain.config.RabbitMQConfig;
-import demo.meetingsmain.service.MeetingService;
+import demo.meetingsmain.service.impl.MeetingServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CleanupEventListener {
     @Autowired
-    private MeetingService meetingService;
+    private MeetingServiceImpl meetingService;
     private final RedisTemplate<String, Object> redisTemplate;
     private final Logger log = LoggerFactory.getLogger(CleanupEventListener.class);
 

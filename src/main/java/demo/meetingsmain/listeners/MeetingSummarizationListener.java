@@ -4,8 +4,8 @@ import com.rabbitmq.client.Channel;
 import demo.eventscontract.events.MeetingSummarizationEvent;
 import demo.meetingscontracts.dto.MeetingStatus;
 import demo.meetingsmain.config.RabbitMQConfig;
-import demo.meetingsmain.service.MeetingService;
-import demo.meetingsmain.service.RedisService;
+import demo.meetingsmain.service.impl.MeetingServiceImpl;
+import demo.meetingsmain.service.impl.RedisServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.*;
@@ -19,9 +19,9 @@ import java.io.IOException;
 @Component
 public class MeetingSummarizationListener {
     @Autowired
-    private MeetingService meetingService;
+    private MeetingServiceImpl meetingService;
     @Autowired
-    private RedisService redisService;
+    private RedisServiceImpl redisService;
     private static final Logger log = LoggerFactory.getLogger(MeetingSummarizationListener.class);
     private static final String QUEUE_NAME_MEETING_SUMMARIZED = "meeting-summarization-queue";
     private static final String QUEUE_NAME_MEETING_SUMMARIZED_DLQ = "meeting-summarization-queue.dlq";
