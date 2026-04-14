@@ -88,6 +88,20 @@ public class MeetingService {
         return meetingRepository.findAll().stream().map(this::toResponse).toList();
     }
 
+    @Transactional
+    public void changeMeetingStatusToProcessed(String uuid) {
+        Optional<Meeting> optionalMeeting = meetingRepository.findById(uuid);
+
+        if (optionalMeeting.isPresent()) {
+            Meeting newMeeting = optionalMeeting.get();
+            newMeeting.setStatus(MeetingStatus.PROCESSED);
+            meetingRepository.save(newMeeting);
+        } else {
+            throw new ResourceNotFoundException("Meeting", uuid);
+        }
+        log.info("Changed meeting status to PROCESSED: {}", uuid);
+    }
+
     private MeetingResponse toResponse(Meeting meeting) {
         Set<Integer> participantIds = meeting.getParticipants().stream()
                 .map(User::getId)

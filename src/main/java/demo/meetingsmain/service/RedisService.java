@@ -8,6 +8,7 @@ import demo.meetingscontracts.exceptions.ResourceNotFoundException;
 import demo.meetingsmain.config.RabbitMQConfig;
 import demo.meetingsmain.domain.Meeting;
 import demo.meetingsmain.repository.MeetingRepository;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -37,6 +38,7 @@ public class RedisService {
         this.meetingService = meetingService;
     }
 
+    @Transactional
     public void saveAudio(Integer ord, Boolean isLast, UUID uuid, byte[] audioData) {
         String fullPath = uuid.toString() + "_chunk_" + ord;
 
@@ -46,6 +48,7 @@ public class RedisService {
             throw new IllegalArgumentException();
         }
 
+        // change status to END if isLast == true
         if (isLast) {
             Optional<Meeting> optionalMeeting = meetingRepository.findById(uuid.toString());
 
@@ -53,8 +56,10 @@ public class RedisService {
                 Meeting newMeeting = optionalMeeting.get();
                 newMeeting.setStatus(MeetingStatus.END);
                 meetingRepository.save(newMeeting);
+
+                log.info("Changed meeting status to END: {}", uuid);
             } else {
-                throw new ResourceNotFoundException("Meeting", optionalMeeting);
+                throw new ResourceNotFoundException("Meeting", uuid);
             }
         }
 
@@ -81,6 +86,7 @@ public class RedisService {
         redisTemplate.delete(key);
     }
 
+    @Transactional
     public void updateTranscriptionForMeeting(String result, UUID uuid) {
         String fullPath = uuid.toString() + "_result";
 

@@ -10,6 +10,7 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 public class RabbitMQConfig {
     public static final String EXCHANGE_NAME = "meetings-exchange";
     public static final String ROUTING_KEY_CHUNK_DOWNLOADED = "chunk.downloaded";
+    public static final String ROUTING_KEY_MEETING_SUMMARIZATION = "meeting.summarized";
 
     @Bean
     public TopicExchange meetingsExchange() {
