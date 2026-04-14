@@ -3,8 +3,8 @@ package demo.meetingsmain.controller;
 import demo.meetingscontracts.dto.MeetingRequest;
 import demo.meetingscontracts.dto.MeetingResponse;
 import demo.meetingscontracts.endpoints.MeetingsApi;
-import demo.meetingsmain.service.impl.MeetingServiceImpl;
-import demo.meetingsmain.service.impl.RedisServiceImpl;
+import demo.meetingsmain.service.MeetingService;
+import demo.meetingsmain.service.RedisService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,10 +15,10 @@ import java.util.UUID;
 @RestController
 public class MeetingController implements MeetingsApi {
 
-    private final MeetingServiceImpl meetingService;
-    private final RedisServiceImpl redisService;
+    private final MeetingService meetingService;
+    private final RedisService redisService;
 
-    public MeetingController(MeetingServiceImpl meetingService, RedisServiceImpl redisService) {
+    public MeetingController(MeetingService meetingService, RedisService redisService) {
         this.meetingService = meetingService;
         this.redisService = redisService;
     }

@@ -1,7 +1,7 @@
 package demo.meetingsmain.controller;
 
 import demo.meetingscontracts.endpoints.RedisApi;
-import demo.meetingsmain.service.impl.RedisServiceImpl;
+import demo.meetingsmain.service.RedisService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,9 +10,9 @@ import java.util.UUID;
 
 @RestController
 public class RedisController implements RedisApi {
-    private final RedisServiceImpl redisService;
+    private final RedisService redisService;
 
-    public RedisController(RedisServiceImpl redisService) {
+    public RedisController(RedisService redisService) {
         this.redisService = redisService;
     }
 
