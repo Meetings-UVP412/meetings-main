@@ -42,8 +42,9 @@ public class MeetingController implements MeetingsApi {
         try {
             redisService.saveAudio(ord, isLast, uuid, file.getBytes());
         } catch (IOException e) {
-            return "Error";
+            throw new RuntimeException(e);
         }
+
         return "Встреча создана!";
     }
 }

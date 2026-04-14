@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -85,7 +84,7 @@ public class MeetingService {
     }
 
     public List<MeetingResponse> getMeetings() {
-        log.info("GET all meeting:");
+        log.info("GET all meetings");
         return meetingRepository.findAll().stream().map(this::toResponse).toList();
     }
 

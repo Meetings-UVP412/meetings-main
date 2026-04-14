@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 import java.util.UUID;
 
@@ -74,6 +73,7 @@ public class RedisService {
     }
 
     public byte[] getAudio(String key) {
+        log.info("Retrieve chunk with key: {}", key);
         return (byte[]) redisTemplate.opsForValue().get(key);
     }
 
@@ -92,13 +92,13 @@ public class RedisService {
             stringRedisTemplate.opsForValue().set(fullPath, currentValue + "\n" + result);
         }
 
-        log.info("Updated result text for meeting: {}", uuid);
+        log.info("Updated transcription for meeting: {}", uuid);
     }
 
     public String getMeetingTranscription(UUID uuid) {
         String fullPath = uuid.toString() + "_result";
         String fullText = stringRedisTemplate.opsForValue().get(fullPath);
-        log.info("fullText: {}", fullText);
+        log.info("GET meeting transcription: {}", fullText);
         return fullText;
     }
 }
