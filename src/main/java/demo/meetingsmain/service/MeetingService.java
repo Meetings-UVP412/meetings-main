@@ -42,9 +42,16 @@ public class MeetingService {
     public MeetingResponse createMeeting(MeetingRequest request) {
 
         User author = userRepository.findById(request.authorId())
-                .orElseThrow(() -> new ResourceNotFoundException("Author not found: ", request.authorId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Author", request.authorId()));
 
-        Set<User> participants = new HashSet<>(userRepository.findAllById(request.users()));
+        List<Integer> userIds = request.users();
+        List<User> foundUsers = userRepository.findAllById(userIds);
+
+        if (foundUsers.size() != userIds.size()) {
+            throw new ResourceNotFoundException("User", userIds);
+        }
+
+        Set<User> participants = new HashSet<>(foundUsers);
 
         LocalDateTime now = LocalDateTime.now();
         Meeting meeting = new Meeting(
@@ -77,7 +84,7 @@ public class MeetingService {
 
     public MeetingResponse getMeeting(String uuid) {
         Meeting meeting = meetingRepository.findById(uuid)
-                .orElseThrow(() -> new ResourceNotFoundException("Meeting not found: ", uuid));
+                .orElseThrow(() -> new ResourceNotFoundException("Meeting", uuid));
 
         log.info("GET meeting: {}", meeting);
         return toResponse(meeting);
