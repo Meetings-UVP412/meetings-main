@@ -1,6 +1,7 @@
 package demo.meetingsmain.service;
 
 import demo.eventscontract.events.ChunkDownloadedEvent;
+import demo.eventscontract.events.CleanupMeetingEvent;
 import demo.meetingscontracts.dto.MeetingResponse;
 import demo.meetingscontracts.dto.MeetingStatus;
 import demo.meetingscontracts.exceptions.IllegalArgumentException;
@@ -11,11 +12,15 @@ import demo.meetingsmain.repository.MeetingRepository;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.ObjectMapper;
+
 import java.util.Optional;
 import java.util.UUID;
 
@@ -106,5 +111,19 @@ public class RedisService {
         String fullText = stringRedisTemplate.opsForValue().get(fullPath);
         log.info("GET meeting transcription: {}", fullText);
         return fullText;
+    }
+
+    public void scheduleCleanup(String meetingUuid, Integer ord, long delayMs) {
+        CleanupMeetingEvent event = new CleanupMeetingEvent(meetingUuid, ord);
+
+        Message message = MessageBuilder
+                .withBody(new ObjectMapper().writeValueAsBytes(event))
+                .setHeader("x-delay", delayMs)
+                .setContentType("application/json")
+                .build();
+
+        rabbitTemplate.send(RabbitMQConfig.DELAYED_CLEANUP_EXCHANGE, RabbitMQConfig.CLEANUP_ROUTING_KEY, message);
+
+        log.info("Запланирована очистка встречи: {} через {} мс", meetingUuid, delayMs);
     }
 }
