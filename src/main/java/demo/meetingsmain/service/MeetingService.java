@@ -96,17 +96,17 @@ public class MeetingService {
     }
 
     @Transactional
-    public void changeMeetingStatusToProcessed(String uuid) {
+    public void changeMeetingStatus(String uuid, MeetingStatus status) {
         Optional<Meeting> optionalMeeting = meetingRepository.findById(uuid);
 
         if (optionalMeeting.isPresent()) {
             Meeting newMeeting = optionalMeeting.get();
-            newMeeting.setStatus(MeetingStatus.PROCESSED);
+            newMeeting.setStatus(status);
             meetingRepository.save(newMeeting);
         } else {
             throw new ResourceNotFoundException("Meeting", uuid);
         }
-        log.info("Changed meeting status to PROCESSED: {}", uuid);
+        log.info("Changed meeting: {} status to: {}", uuid, status.name());
     }
 
     private MeetingResponse toResponse(Meeting meeting) {

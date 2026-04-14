@@ -2,6 +2,7 @@ package demo.meetingsmain.listeners;
 
 import com.rabbitmq.client.Channel;
 import demo.eventscontract.events.MeetingSummarizationEvent;
+import demo.meetingscontracts.dto.MeetingStatus;
 import demo.meetingsmain.config.RabbitMQConfig;
 import demo.meetingsmain.service.MeetingService;
 import demo.meetingsmain.service.RedisService;
@@ -55,6 +56,6 @@ public class MeetingSummarizationListener {
     }
 
     private void changeStatusToProcessed(String uuid) {
-        meetingService.changeMeetingStatusToProcessed(uuid);
+        meetingService.changeMeetingStatus(uuid, MeetingStatus.PROCESSED);
     }
 }
