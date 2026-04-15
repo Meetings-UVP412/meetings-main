@@ -74,8 +74,3 @@ public class Chat extends BaseEntityUUID {
                 '}';
     }
 }
-
-class Message {
-    private String role;
-    private String content;
-}
