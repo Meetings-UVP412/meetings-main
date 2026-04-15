@@ -12,18 +12,9 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "chats")
 public class Chat extends BaseEntityUUID {
-
-    @Column(name = "meeting_uuid", nullable = false)
     private String meetingUUID;
-
-    @Column(name = "title", nullable = false)
     private String title;
-
-    @Column(columnDefinition = "jsonb", length = 2047)
-    @JdbcTypeCode(SqlTypes.JSON)
     private String messagesJson;
-
-    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     protected Chat() {}
@@ -34,7 +25,6 @@ public class Chat extends BaseEntityUUID {
         this.setMessages(initialMessages);
         this.createdAt = createdAt;
     }
-
 
     public List<Message> readMessages() {
         if (messagesJson == null || messagesJson.isEmpty()) {
@@ -57,6 +47,7 @@ public class Chat extends BaseEntityUUID {
         }
     }
 
+    @Column(name = "meeting_uuid", nullable = false)
     public String getMeetingUUID() {
         return meetingUUID;
     }
@@ -65,6 +56,7 @@ public class Chat extends BaseEntityUUID {
         this.meetingUUID = meetingUUID;
     }
 
+    @Column(name = "title", nullable = false)
     public String getTitle() {
         return title;
     }
@@ -73,6 +65,8 @@ public class Chat extends BaseEntityUUID {
         this.title = title;
     }
 
+    @Column(columnDefinition = "jsonb", length = 2047)
+    @JdbcTypeCode(SqlTypes.JSON)
     public String getMessagesJson() {
         return messagesJson;
     }
@@ -81,6 +75,7 @@ public class Chat extends BaseEntityUUID {
         this.messagesJson = messagesJson;
     }
 
+    @Column(name = "created_at", nullable = false)
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }

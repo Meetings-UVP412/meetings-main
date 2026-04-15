@@ -3,11 +3,10 @@ package demo.meetingsmain.service.impl;
 import demo.meetingscontracts.dto.ChatDTO;
 import demo.meetingscontracts.dto.ChatRequest;
 import demo.meetingscontracts.dto.MessageDTO;
+import demo.meetingscontracts.exceptions.ResourceNotFoundException;
 import demo.meetingsmain.domain.Chat;
-import demo.meetingsmain.domain.Meeting;
 import demo.meetingsmain.domain.Message;
 import demo.meetingsmain.repository.ChatRepository;
-import demo.meetingsmain.repository.MeetingRepository;
 import demo.meetingsmain.service.ChatService;
 import demo.meetingsmain.service.MeetingService;
 import org.slf4j.Logger;
@@ -68,6 +67,18 @@ public class ChatServiceImpl implements ChatService {
     public void deleteChat(String chatUUID) {
         chatRepository.deleteById(chatUUID);
         log.info("Deleted chat: {}", chatUUID);
+    }
+
+    public void updateMessages(String chatId, List<MessageDTO> messageDTOs) {
+        Chat chat = chatRepository.findById(chatId)
+                .orElseThrow(() -> new ResourceNotFoundException("Chat", chatId));
+
+        List<Message> messages = messageDTOs.stream()
+                .map(dto -> new Message(dto.role(), dto.content()))
+                .collect(Collectors.toList());
+
+        chat.setMessages(messages);
+        chatRepository.save(chat);
     }
 
     private ChatDTO toChatDTO(Chat chat) {
