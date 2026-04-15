@@ -1,35 +1,60 @@
 package demo.meetingsmain.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "chats")
 public class Chat extends BaseEntityUUID {
-    @Column(name = "meeting_uuid")
+
+    @Column(name = "meeting_uuid", nullable = false)
     private String meetingUUID;
 
+    @Column(name = "title", nullable = false)
     private String title;
 
+    @Column(columnDefinition = "jsonb", length = 2047)
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb")
-    private List<Message> messages = new ArrayList<>();
+    private String messagesJson;
 
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    protected Chat() { }
+    protected Chat() {}
 
-    public Chat(String meetingUUID, String title, List<Message> messages, LocalDateTime createdAt) {
+    public Chat(String meetingUUID, String title, List<Message> initialMessages, LocalDateTime createdAt) {
         this.meetingUUID = meetingUUID;
         this.title = title;
-        this.messages = messages;
+        this.setMessages(initialMessages);
         this.createdAt = createdAt;
+    }
+
+
+    public List<Message> readMessages() {
+        if (messagesJson == null || messagesJson.isEmpty()) {
+            return Collections.emptyList();
+        }
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return Arrays.asList(mapper.readValue(messagesJson, Message[].class));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse messages JSON", e);
+        }
+    }
+
+    public void setMessages(List<Message> messages) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            this.messagesJson = mapper.writeValueAsString(messages != null ? messages : List.of());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to serialize messages to JSON", e);
+        }
     }
 
     public String getMeetingUUID() {
@@ -48,12 +73,12 @@ public class Chat extends BaseEntityUUID {
         this.title = title;
     }
 
-    public List<Message> getMessages() {
-        return messages;
+    public String getMessagesJson() {
+        return messagesJson;
     }
 
-    public void setMessages(List<Message> messages) {
-        this.messages = messages;
+    public void setMessagesJson(String messagesJson) {
+        this.messagesJson = messagesJson;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -69,7 +94,7 @@ public class Chat extends BaseEntityUUID {
         return "Chat{" +
                 "meetingUUID='" + meetingUUID + '\'' +
                 ", title='" + title + '\'' +
-                ", messages=" + messages +
+                ", messagesJson='" + messagesJson + '\'' +
                 ", createdAt=" + createdAt +
                 '}';
     }

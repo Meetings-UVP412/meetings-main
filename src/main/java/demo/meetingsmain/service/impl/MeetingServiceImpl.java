@@ -35,8 +35,7 @@ public class MeetingServiceImpl implements MeetingService {
     }
 
     public void findByUUID(String uuid) {
-        Optional.of(meetingRepository.findById(uuid))
-                .orElseThrow(() -> new ResourceNotFoundException("Meeting", uuid));
+        meetingRepository.findById(uuid).orElseThrow(() -> new ResourceNotFoundException("Meeting", uuid));
     }
 
     @Transactional

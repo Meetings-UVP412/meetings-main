@@ -1,5 +1,7 @@
 package demo.meetingsmain.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import demo.eventscontract.events.ChunkDownloadedEvent;
 import demo.eventscontract.events.CleanupMeetingEvent;
 import demo.meetingscontracts.dto.MeetingResponse;
@@ -20,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import tools.jackson.databind.ObjectMapper;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -113,7 +114,7 @@ public class RedisServiceImpl implements RedisService {
         return fullText;
     }
 
-    public void scheduleCleanup(String meetingUuid, Integer ord, long delayMs) {
+    public void scheduleCleanup(String meetingUuid, Integer ord, long delayMs) throws JsonProcessingException {
         CleanupMeetingEvent event = new CleanupMeetingEvent(meetingUuid, ord);
 
         Message message = MessageBuilder
