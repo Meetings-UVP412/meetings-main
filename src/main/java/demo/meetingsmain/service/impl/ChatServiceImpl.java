@@ -6,7 +6,6 @@ import demo.meetingscontracts.dto.MeetingStatus;
 import demo.meetingscontracts.dto.MessageDTO;
 import demo.meetingscontracts.exceptions.ResourceNotFoundException;
 import demo.meetingsmain.domain.Chat;
-import demo.meetingsmain.domain.Meeting;
 import demo.meetingsmain.domain.Message;
 import demo.meetingsmain.repository.ChatRepository;
 import demo.meetingsmain.service.ChatService;
@@ -54,7 +53,16 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public ChatDTO createChat(ChatRequest request) {
         meetingService.findByUUID(request.meetingUUID()); // check meeting exists
-        Chat chat = new Chat(request.meetingUUID(), request.name(), null, LocalDateTime.now());
+
+        List<Message> messages = new ArrayList<>();
+        if (request.firstMessage() != null) {
+            messages.add(new Message(
+                    request.firstMessage().role(),
+                    request.firstMessage().content()
+            ));
+        }
+
+        Chat chat = new Chat(request.meetingUUID(), request.name(), messages.isEmpty() ? null : messages, LocalDateTime.now());
         chatRepository.save(chat);
         log.info("Created new chat: {} to meeting: {}", chat.getId(), chat.getMeetingUUID());
         return toChatDTO(chat);
@@ -104,7 +112,8 @@ public class ChatServiceImpl implements ChatService {
                 chat.getId(),
                 chat.getTitle(),
                 messageDTOs,
-                chat.getCreatedAt()
+                chat.getCreatedAt(),
+                chat.getMeetingUUID()
         );
     }
 }

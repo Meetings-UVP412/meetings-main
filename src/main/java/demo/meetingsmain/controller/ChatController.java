@@ -41,11 +41,6 @@ public class ChatController implements ChatApi {
 
     @Override
     public ChatDTO createChat(ChatRequest request) {
-
-        if (!chatService.checkStatus(request.meetingUUID())) {
-           throw new MeetingArchivedException("Chats can only be created for meetings with status PROCESSED", request.meetingUUID());
-        }
-
         return chatService.createChat(request);
     }
 
