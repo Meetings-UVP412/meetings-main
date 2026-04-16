@@ -26,7 +26,7 @@ public class ChatController implements ChatApi {
     public ChatController(ChatService chatService, WebClient.Builder webClientBuilder) {
         this.chatService = chatService;
         this.webClient = webClientBuilder
-                .baseUrl("http://aichat-service")
+                .baseUrl("http://localhost:8000")
                 .build();
     }
 
@@ -64,14 +64,19 @@ public class ChatController implements ChatApi {
     }
 
     @Override
+    public ChatDTO chatHistory(String chatUUID) {
+        return chatService.chatHistory(chatUUID);
+    }
+
+    @Override
     public ResponseEntity<String> deleteChat(String chatUUID) {
         chatService.deleteChat(chatUUID);
         return ResponseEntity.ok("Chat successfully deleted");
     }
 
-    @PostMapping("/chats/update-messages")
-    public ResponseEntity<String> updateChatMessages(@RequestBody UpdateMessagesRequest request) {
-        chatService.updateMessages(request.chatId(), request.messages());
+    @Override
+    public ResponseEntity<String> updateChatMessages(String chatUUID, UpdateMessagesRequest request) {
+        chatService.updateMessages(chatUUID, request.messages());
         return ResponseEntity.ok("Messages updated");
     }
 }

@@ -5,6 +5,7 @@ import demo.meetingscontracts.dto.ChatRequest;
 import demo.meetingscontracts.dto.MessageDTO;
 import demo.meetingscontracts.exceptions.ResourceNotFoundException;
 import demo.meetingsmain.domain.Chat;
+import demo.meetingsmain.domain.Meeting;
 import demo.meetingsmain.domain.Message;
 import demo.meetingsmain.repository.ChatRepository;
 import demo.meetingsmain.service.ChatService;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,6 +63,17 @@ public class ChatServiceImpl implements ChatService {
         chatRepository.save(chat);
         log.info("Created new chat: {} to meeting: {}", chat.getId(), chat.getMeetingUUID());
         return toChatDTO(chat);
+    }
+
+    @Override
+    public ChatDTO chatHistory(String chatUUID) {
+        Optional<Chat> optionalChat = chatRepository.findById(chatUUID);
+        if (optionalChat.isPresent()) {
+            Chat chat = optionalChat.get();
+            return toChatDTO(chat);
+        } else {
+            throw new ResourceNotFoundException("Chat", chatUUID);
+        }
     }
 
     @Override

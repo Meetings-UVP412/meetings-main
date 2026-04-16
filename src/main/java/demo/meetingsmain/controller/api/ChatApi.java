@@ -3,6 +3,7 @@ package demo.meetingsmain.controller.api;
 import demo.meetingscontracts.dto.ChatDTO;
 import demo.meetingscontracts.dto.ChatRequest;
 import demo.meetingscontracts.dto.MessageRequest;
+import demo.meetingscontracts.dto.UpdateMessagesRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import reactor.core.publisher.Flux;
@@ -34,7 +35,14 @@ public interface ChatApi {
     @PostMapping(value = "/send", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     Flux<String> sendMessage(@RequestBody MessageRequest request);
 
+    @Operation(summary = "История чата")
+    @GetMapping("/history/{chatUUID}")
+    ChatDTO chatHistory(@PathVariable String chatUUID);
+
     @Operation(summary = "Удаление чата")
     @DeleteMapping("/{chatUUID}")
     ResponseEntity<String> deleteChat(@PathVariable String chatUUID);
+
+    @PostMapping("/{chatUUID}/update-messages")
+    ResponseEntity<String> updateChatMessages(@PathVariable String chatUUID,@RequestBody UpdateMessagesRequest request);
 }
