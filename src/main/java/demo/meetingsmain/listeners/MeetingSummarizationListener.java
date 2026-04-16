@@ -38,7 +38,7 @@ public class MeetingSummarizationListener {
             log.info("Got meeting summarization from queue: {} \nSummary: {}", event.uuid(), event.summary());
             changeStatusToProcessed(event.uuid()); // change meeting status to PROCEED
 
-            redisService.scheduleCleanup(event.uuid(), event.ord(), 40 * 1000); // sent to rabbit to drop meeting from redis in 3 hours
+            redisService.scheduleCleanup(event.uuid(), event.ord(), 3 * 60 * 60 * 1000); // sent to rabbit to drop meeting from redis in 3 hours
             log.info("Sent message to rabbitMQ, meeting: {} will be dropped from redis in 3 hours", event.uuid());
 
             channel.basicAck(deliveryTag, false);
