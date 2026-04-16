@@ -13,4 +13,5 @@ public interface ChatService {
     ChatDTO chatHistory(String chatUUID);
     void deleteChat(String chatUUID);
     void updateMessages(String chatId, List<MessageDTO> messageDTOs);
+    Boolean checkStatus(String meetingUUID);
 }

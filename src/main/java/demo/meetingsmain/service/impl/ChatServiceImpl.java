@@ -2,6 +2,7 @@ package demo.meetingsmain.service.impl;
 
 import demo.meetingscontracts.dto.ChatDTO;
 import demo.meetingscontracts.dto.ChatRequest;
+import demo.meetingscontracts.dto.MeetingStatus;
 import demo.meetingscontracts.dto.MessageDTO;
 import demo.meetingscontracts.exceptions.ResourceNotFoundException;
 import demo.meetingsmain.domain.Chat;
@@ -92,6 +93,12 @@ public class ChatServiceImpl implements ChatService {
 
         chat.setMessages(messages);
         chatRepository.save(chat);
+    }
+
+    @Override
+    public Boolean checkStatus(String meetingUUID) {
+        MeetingStatus status = meetingService.getMeeting(meetingUUID).status();
+        return MeetingStatus.PROCESSED.equals(status);
     }
 
     private ChatDTO toChatDTO(Chat chat) {

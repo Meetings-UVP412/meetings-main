@@ -2,6 +2,7 @@ package demo.meetingsmain.exception;
 
 import demo.meetingscontracts.dto.StatusResponse;
 import demo.meetingscontracts.exceptions.IllegalArgumentException;
+import demo.meetingscontracts.exceptions.MeetingArchivedException;
 import demo.meetingscontracts.exceptions.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<StatusResponse> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new StatusResponse("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(MeetingArchivedException.class)
+    public ResponseEntity<StatusResponse> handleMeetingArchived(MeetingArchivedException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new StatusResponse("error", ex.getMessage()));

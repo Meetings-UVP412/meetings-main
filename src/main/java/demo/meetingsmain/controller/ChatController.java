@@ -4,6 +4,7 @@ import demo.meetingscontracts.dto.ChatDTO;
 import demo.meetingscontracts.dto.ChatRequest;
 import demo.meetingscontracts.dto.MessageRequest;
 import demo.meetingscontracts.dto.UpdateMessagesRequest;
+import demo.meetingscontracts.exceptions.MeetingArchivedException;
 import demo.meetingsmain.controller.api.ChatApi;
 import demo.meetingsmain.service.ChatService;
 import org.slf4j.Logger;
@@ -40,14 +41,24 @@ public class ChatController implements ChatApi {
 
     @Override
     public ChatDTO createChat(ChatRequest request) {
+
+        if (!chatService.checkStatus(request.meetingUUID())) {
+           throw new MeetingArchivedException("Chats can only be created for meetings with status PROCESSED", request.meetingUUID());
+        }
+
         return chatService.createChat(request);
     }
 
     @Override
     public Flux<String> sendMessage(MessageRequest request) {
         String chatId = request.chatUUID();
+
         if (chatId == null || chatId.isEmpty()) {
             return Flux.error(new IllegalArgumentException("chatUUID is required"));
+        }
+
+        if (!chatService.checkStatus(request.meetingUUID())) {
+            return Flux.error(new MeetingArchivedException("Messages can only be sent to meetings with status PROCESSED", request.meetingUUID()));
         }
 
         Map<String, Object> body = Map.of("message", request.message());
