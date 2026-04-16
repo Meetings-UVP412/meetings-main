@@ -2,7 +2,7 @@ package demo.meetingsmain.controller;
 
 import demo.meetingscontracts.dto.MeetingRequest;
 import demo.meetingscontracts.dto.MeetingResponse;
-import demo.meetingscontracts.endpoints.MeetingsApi;
+import demo.meetingsmain.controller.api.MeetingsApi;
 import demo.meetingsmain.service.MeetingService;
 import demo.meetingsmain.service.RedisService;
 import org.springframework.http.ResponseEntity;

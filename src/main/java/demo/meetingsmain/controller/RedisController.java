@@ -1,6 +1,6 @@
 package demo.meetingsmain.controller;
 
-import demo.meetingscontracts.endpoints.RedisApi;
+import demo.meetingsmain.controller.api.RedisApi;
 import demo.meetingsmain.service.RedisService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
