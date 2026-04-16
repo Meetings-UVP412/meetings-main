@@ -54,13 +54,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public ChatDTO createChat(ChatRequest request) {
         meetingService.findByUUID(request.meetingUUID()); // check meeting exists
-
-        List<Message> messages = new ArrayList<>();
-        messages.add(new Message(
-                request.firstMessage().role(),
-                request.firstMessage().content()
-        ));
-        Chat chat = new Chat(request.meetingUUID(), request.name(), messages, LocalDateTime.now());
+        Chat chat = new Chat(request.meetingUUID(), request.name(), null, LocalDateTime.now());
         chatRepository.save(chat);
         log.info("Created new chat: {} to meeting: {}", chat.getId(), chat.getMeetingUUID());
         return toChatDTO(chat);

@@ -5,6 +5,7 @@ import demo.meetingscontracts.dto.ChatRequest;
 import demo.meetingscontracts.dto.MessageRequest;
 import demo.meetingscontracts.dto.UpdateMessagesRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import reactor.core.publisher.Flux;
 import java.util.List;
@@ -27,6 +28,7 @@ public interface ChatApi {
 
     @Operation(summary = "Создание чата")
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiResponse(responseCode = "404", description = "Встреча на найдена!")
     @PostMapping("/create")
     ChatDTO createChat(@RequestBody ChatRequest request);
 

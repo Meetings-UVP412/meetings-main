@@ -7,6 +7,7 @@ import demo.meetingscontracts.exceptions.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -36,6 +37,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<StatusResponse> handleMeetingArchived(MeetingArchivedException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.TEXT_EVENT_STREAM)
                 .body(new StatusResponse("error", ex.getMessage()));
     }
 
