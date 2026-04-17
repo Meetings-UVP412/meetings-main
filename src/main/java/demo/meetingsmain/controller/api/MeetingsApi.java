@@ -1,5 +1,6 @@
 package demo.meetingsmain.controller.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import demo.meetingscontracts.dto.MeetingRequest;
 import demo.meetingscontracts.dto.MeetingResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -45,4 +46,10 @@ public interface MeetingsApi {
                                       @RequestParam("isLast") Boolean isLast,
                                       @RequestParam("m-uid") UUID uuid
     );
+
+    @Operation(summary = "Удаление транскрипции и аудио файлов")
+    @ApiResponse(responseCode = "200", description = "Транскрипции и аудио файлы успешно очищены!")
+    @ApiResponse(responseCode = "404", description = "Встреча не найдена!")
+    @PostMapping("/drop/{meetingUUID}")
+    MeetingResponse dropTranscription(@PathVariable String meetingUUID) throws JsonProcessingException;
 }

@@ -1,5 +1,6 @@
 package demo.meetingsmain.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import demo.meetingscontracts.dto.MeetingRequest;
 import demo.meetingscontracts.dto.MeetingResponse;
 import demo.meetingsmain.controller.api.MeetingsApi;
@@ -47,5 +48,12 @@ public class MeetingController implements MeetingsApi {
         }
 
         return ResponseEntity.ok("Файл успешно загружен!");
+    }
+
+    @Override
+    public MeetingResponse dropTranscription(String meetingUUID) throws JsonProcessingException {
+        int ord = redisService.getMeetingLastOrd(meetingUUID);
+        redisService.scheduleCleanup(meetingUUID, ord, 1);
+        return meetingService.getMeeting(meetingUUID);
     }
 }

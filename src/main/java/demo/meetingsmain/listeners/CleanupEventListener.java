@@ -33,6 +33,7 @@ public class CleanupEventListener {
             ord--;
         }
         redisTemplate.delete(uuid + "_result");
+        redisTemplate.delete(uuid + "_last_ord");
 
         // change status to ARCHIVED
         meetingService.changeMeetingStatus(uuid, MeetingStatus.ARCHIVED);

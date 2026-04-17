@@ -45,8 +45,27 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Transactional
+    @Override
     public void saveAudio(Integer ord, Boolean isLast, UUID uuid, byte[] audioData) {
+        if (ord == null || ord <= 0) {
+            throw new IllegalArgumentException();
+        }
+
         String fullPath = uuid.toString() + "_chunk_" + ord;
+        String ordPath = uuid + "_last_ord";
+
+        // check previous ord
+        String lastSavedOrd = stringRedisTemplate.opsForValue().get(ordPath);
+        if (lastSavedOrd == null) {
+            if (!ord.equals(1)) {
+                throw new IllegalStateException("Первый чанк должен иметь ord=1");
+            }
+        } else {
+            int intOrd = Integer.parseInt(lastSavedOrd);
+            if (!ord.equals(intOrd + 1)) {
+                throw new IllegalStateException(String.format("Неверный порядок чанков для встречи %s: ожидался чанк %d, получен %d", uuid, intOrd + 1, ord));
+            }
+        }
 
         // Check meeting exists and have NEW status
         MeetingResponse meeting = meetingService.getMeeting(uuid.toString());
@@ -68,6 +87,7 @@ public class RedisServiceImpl implements RedisService {
                 throw new ResourceNotFoundException("Meeting", uuid);
             }
         }
+        stringRedisTemplate.opsForValue().set(ordPath, ord.toString()); // save current ord
 
         redisTemplate.opsForValue().set(fullPath, audioData); // save audio in redis
         log.info("Saved new chunk: UUID: {} ord: {} isLast: {}", uuid, ord, isLast);
@@ -93,6 +113,7 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Transactional
+    @Override
     public void updateTranscriptionForMeeting(String result, UUID uuid) {
         String fullPath = uuid.toString() + "_result";
 
@@ -107,6 +128,7 @@ public class RedisServiceImpl implements RedisService {
         log.info("Updated transcription for meeting: {}", uuid);
     }
 
+    @Override
     public String getMeetingTranscription(UUID uuid) {
         String fullPath = uuid.toString() + "_result";
         String fullText = stringRedisTemplate.opsForValue().get(fullPath);
@@ -114,7 +136,12 @@ public class RedisServiceImpl implements RedisService {
         return fullText;
     }
 
+    @Override
     public void scheduleCleanup(String meetingUuid, Integer ord, long delayMs) throws JsonProcessingException {
+        if (!checkStatusProcessed(meetingUuid)) {
+            throw new IllegalStateException();
+        }
+
         CleanupMeetingEvent event = new CleanupMeetingEvent(meetingUuid, ord);
 
         Message message = MessageBuilder
@@ -126,5 +153,23 @@ public class RedisServiceImpl implements RedisService {
         rabbitTemplate.send(RabbitMQConfig.DELAYED_CLEANUP_EXCHANGE, RabbitMQConfig.CLEANUP_ROUTING_KEY, message);
 
         log.info("Запланирована очистка встречи: {} через {} мс", meetingUuid, delayMs);
+    }
+
+    @Override
+    public int getMeetingLastOrd(String uuid) {
+        meetingService.getMeeting(uuid);
+
+        if (!checkStatusProcessed(uuid)) {
+            throw new IllegalStateException();
+        }
+
+        String ordPath = uuid + "_last_ord";
+        String lastSavedOrd = stringRedisTemplate.opsForValue().get(ordPath);
+        return Integer.parseInt(lastSavedOrd);
+    }
+
+    private Boolean checkStatusProcessed(String meetingUUD) {
+        MeetingResponse meeting = meetingService.getMeeting(meetingUUD);
+        return meeting.status().equals(MeetingStatus.PROCESSED);
     }
 }

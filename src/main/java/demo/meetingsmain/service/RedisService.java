@@ -11,4 +11,5 @@ public interface RedisService {
     void updateTranscriptionForMeeting(String result, UUID uuid);
     String getMeetingTranscription(UUID uuid);
     void scheduleCleanup(String meetingUuid, Integer ord, long delayMs) throws JsonProcessingException;
+    int getMeetingLastOrd(String uuid);
 }
