@@ -110,7 +110,10 @@ public class MeetingServiceImpl implements MeetingService {
 
     public List<MeetingResponse> getMeetings() {
         log.info("GET all meetings");
-        return meetingRepository.findAll().stream().map(this::toResponse).toList();
+        return meetingRepository.findAll().stream()
+                .sorted(Comparator.comparing(Meeting::getCreatedAt).reversed())
+                .map(this::toResponse)
+                .toList();
     }
 
     @Transactional
