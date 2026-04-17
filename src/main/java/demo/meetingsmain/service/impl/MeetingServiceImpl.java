@@ -75,7 +75,7 @@ public class MeetingServiceImpl implements MeetingService {
         );
 
         Meeting savedMeeting = meetingRepository.save(meeting);
-        log.info("Created new meeting: {}", meeting);
+        log.info("Created new meeting: {}", meeting.getId());
 
         UserDTO authorDto = userService.findById(author.getId());
         String authorName = authorDto.lastName() + " " +
@@ -104,7 +104,7 @@ public class MeetingServiceImpl implements MeetingService {
         Meeting meeting = meetingRepository.findById(uuid)
                 .orElseThrow(() -> new ResourceNotFoundException("Meeting", uuid));
 
-        log.info("GET meeting: {}", meeting);
+        log.info("GET meeting: {}", uuid);
         return toResponse(meeting);
     }
 

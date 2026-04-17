@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.IOException;
 
 @Component
@@ -33,6 +35,7 @@ public class MeetingSummarizationListener {
                     @Argument(name = "x-dead-letter-routing-key", value = "dlq.meetings-summarization")}),
             exchange = @Exchange(name = RabbitMQConfig.EXCHANGE_NAME, type = "topic", durable = "true"),
             key = RabbitMQConfig.ROUTING_KEY_MEETING_SUMMARIZATION))
+    @Transactional
     public void handleFinishedSummarization(@Payload MeetingSummarizationEvent event, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) throws IOException {
         try {
             log.info("Got meeting summarization from queue: {} \nSummary: {}", event.uuid(), event.summary());
