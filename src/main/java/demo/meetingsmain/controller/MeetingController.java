@@ -40,9 +40,9 @@ public class MeetingController implements MeetingsApi {
     }
 
     @Override
-    public ResponseEntity<String> uploadFile(MultipartFile file, Integer ord, Boolean isLast, UUID uuid) {
+    public ResponseEntity<String> uploadFile(MultipartFile file, Integer ord, Boolean isLast, UUID uuid, int duration) {
         try {
-            redisService.saveAudio(ord, isLast, uuid, file.getBytes());
+            redisService.saveAudio(ord, isLast, uuid, file.getBytes(), duration);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

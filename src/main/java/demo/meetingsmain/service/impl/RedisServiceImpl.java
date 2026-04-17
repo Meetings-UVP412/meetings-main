@@ -46,7 +46,7 @@ public class RedisServiceImpl implements RedisService {
 
     @Transactional
     @Override
-    public void saveAudio(Integer ord, Boolean isLast, UUID uuid, byte[] audioData) {
+    public void saveAudio(Integer ord, Boolean isLast, UUID uuid, byte[] audioData, int chunkDurationSeconds) {
         if (ord == null || ord <= 0) {
             throw new IllegalArgumentException();
         }
@@ -88,6 +88,8 @@ public class RedisServiceImpl implements RedisService {
             }
         }
         stringRedisTemplate.opsForValue().set(ordPath, ord.toString()); // save current ord
+
+        updateMeetingDuration(uuid.toString(), chunkDurationSeconds);
 
         redisTemplate.opsForValue().set(fullPath, audioData); // save audio in redis
         log.info("Saved new chunk: UUID: {} ord: {} isLast: {}", uuid, ord, isLast);
@@ -171,5 +173,27 @@ public class RedisServiceImpl implements RedisService {
     private Boolean checkStatusProcessed(String meetingUUD) {
         MeetingResponse meeting = meetingService.getMeeting(meetingUUD);
         return meeting.status().equals(MeetingStatus.PROCESSED);
+    }
+
+    private void updateMeetingDuration(String meetingId, int chunkDurationSeconds) {
+        Optional<Meeting> optionalMeeting = meetingRepository.findById(meetingId);
+        if (optionalMeeting.isEmpty()) {
+            throw new ResourceNotFoundException("Meeting", meetingId);
+        }
+
+        Meeting meeting = optionalMeeting.get();
+        Integer currentDuration = meeting.getDuration();
+
+        int newTotalDuration;
+        if (currentDuration == null || currentDuration <= 0) {
+            newTotalDuration = chunkDurationSeconds;
+        } else {
+            newTotalDuration = currentDuration + chunkDurationSeconds;
+        }
+
+        meeting.setDuration(newTotalDuration);
+        meetingRepository.save(meeting);
+
+        log.info("Updated meeting duration {}: {} sec (chunk: {} sec)", meetingId, newTotalDuration, chunkDurationSeconds);
     }
 }

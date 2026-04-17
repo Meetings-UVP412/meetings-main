@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.UUID;
 
 public interface RedisService {
-    void saveAudio(Integer ord, Boolean isLast, UUID uuid, byte[] audioData);
+    void saveAudio(Integer ord, Boolean isLast, UUID uuid, byte[] audioData, int chunkDurationSeconds);
     byte[] getAudio(String key);
     void deleteAudio(String key);
     void updateTranscriptionForMeeting(String result, UUID uuid);

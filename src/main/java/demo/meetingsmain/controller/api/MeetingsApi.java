@@ -44,7 +44,8 @@ public interface MeetingsApi {
     ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file,
                                       @RequestParam("ord") Integer ord,
                                       @RequestParam("isLast") Boolean isLast,
-                                      @RequestParam("m-uid") UUID uuid
+                                      @RequestParam("m-uid") UUID uuid,
+                                      @RequestParam("duration") int duration
     );
 
     @Operation(summary = "Удаление транскрипции и аудио файлов")
