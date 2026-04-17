@@ -47,7 +47,7 @@ public class ChatServiceImpl implements ChatService {
         meetingService.findByUUID(meetingUUID); // check meeting exists
 
         log.info("GET Chats for meeting: {}", meetingUUID);
-        return chatRepository.findByMeetingUUID(meetingUUID).stream().map(this::toChatDTO).collect(Collectors.toList());
+        return chatRepository.findByMeetingUUIDOrderByCreatedAtDesc(meetingUUID).stream().map(this::toChatDTO).collect(Collectors.toList());
     }
 
     @Override

@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, String> {
-    List<Chat> findByMeetingUUID(String meetingUUID);
+    List<Chat> findByMeetingUUIDOrderByCreatedAtDesc(String meetingUUID);
 }
