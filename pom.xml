@@ -119,7 +119,7 @@
         <dependency>
             <groupId>demo</groupId>
             <artifactId>meetings-contracts</artifactId>
-            <version>5.26</version>
+            <version>5.27</version>
         </dependency>
 
     </dependencies>
