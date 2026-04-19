@@ -140,10 +140,6 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public void scheduleCleanup(String meetingUuid, Integer ord, long delayMs) throws JsonProcessingException {
-        if (!checkStatusProcessed(meetingUuid)) {
-            throw new IllegalStateException();
-        }
-
         CleanupMeetingEvent event = new CleanupMeetingEvent(meetingUuid, ord);
 
         Message message = MessageBuilder
